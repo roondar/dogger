@@ -21,9 +21,9 @@ Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed
 
 ```bash
 docker run -d \
-  -p 8594:8594 \
+  -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  wangyucode/dogger:0.1.0
+  wangyucode/dogger:0.1.1
 ```
 
 2. Using docker-compose
@@ -31,9 +31,9 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.1.0
+    image: wangyucode/dogger:0.1.1
     ports:
-      - 8594:8594
+      - 8595:8595
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 ```
