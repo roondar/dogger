@@ -24,7 +24,7 @@ Crane 是一个使用`Rust`和`React`编写的简单、快速Docker Web UI，旨
 docker run -d \
   -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  wangyucode/dogger:0.1.1
+  wangyucode/dogger:0.1.2
 ```
 
 2. 使用 docker-compose
@@ -32,7 +32,7 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.1.1
+    image: wangyucode/dogger:0.1.2
     ports:
       - 8595:8595
     volumes:

@@ -8,7 +8,7 @@ export default function Info() {
     const [info, setInfo] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8595/api/version")
+        fetch("./api/version")
             .then((res) => res.json())
             .then((json) => {
                 console.log('version->', json);
