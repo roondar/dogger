@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 use std::default::Default;
 
+use axum::http::HeaderValue;
 use axum::{response::Json, routing::get, Router};
 use bollard::image::ListImagesOptions;
 use bollard::{container::ListContainersOptions, Docker};
 use serde_json::{json, Value};
+use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
 
 #[tokio::main]
@@ -14,7 +16,8 @@ async fn main() {
         .route("/api/containers", get(get_containers))
         .route("/api/images", get(get_images))
         .route("/api/version", get(get_version))
-        .nest_service("/", ServeDir::new("../app/dist/"));
+        .nest_service("/", ServeDir::new("../app/dist/"))
+        .layer(CorsLayer::new().allow_origin("http://localhost:5173".parse::<HeaderValue>().unwrap()));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8595").await.unwrap();
