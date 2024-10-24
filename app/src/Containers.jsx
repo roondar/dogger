@@ -10,7 +10,7 @@ export default function Containers() {
     const [stats, setStats] = useState({});
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8595/api/containers")
+        fetch("./api/containers")
             .then((res) => res.json())
             .then((json) => {
                 console.log("containers->", json);
@@ -21,7 +21,7 @@ export default function Containers() {
 
     useEffect(() => {
         containers.filter((c) => c.State === "running").forEach((c) => {
-            fetch(`http://127.0.0.1:8595/api/containers/${c.Id}/stats`)
+            fetch(`./api/containers/${c.Id}/stats`)
                 .then((res) => res.json())
                 .then((json) => {
                     console.log("container stats->", json);

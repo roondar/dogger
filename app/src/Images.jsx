@@ -9,7 +9,7 @@ export default function Images() {
     const [images, setImages] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8595/api/images")
+        fetch("./api/images")
             .then((res) => res.json())
             .then((json) => {
                 console.log("images->", json);
