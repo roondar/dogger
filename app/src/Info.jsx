@@ -34,8 +34,8 @@ export default function Info() {
     return (
                 <Table aria-label="Version info table">
                     <TableHeader>
-                        <TableColumn>name</TableColumn>
-                        <TableColumn>value</TableColumn>
+                        <TableColumn>Name</TableColumn>
+                        <TableColumn>Value</TableColumn>
                     </TableHeader>
                     <TableBody>
                         {info.map((item) => (
