@@ -14,10 +14,10 @@ async fn main() {
         .route("/api/containers", get(get_containers))
         .route("/api/images", get(get_images))
         .route("/api/version", get(get_version))
-        .nest_service("/", ServeDir::new("../app/dist/index.html"));
+        .nest_service("/", ServeDir::new("../app/dist/"));
 
     // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8595").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 

@@ -11,6 +11,7 @@ import rustLogo from './assets/rust.svg'
 import githubLogo from './assets/github.svg'
 import Containers from './Containers';
 import Images from './Images';
+import Info from './Info';
 
 
 function App() {
@@ -36,11 +37,20 @@ function App() {
               <span>Images</span>
             </div>
           }></Tab>
+          <Tab key="info" title={
+            <div className="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+              </svg>
+              <span>Info</span>
+            </div>
+          }></Tab>
         </Tabs>
       </nav>
       <div className='container flex flex-1 mx-auto p-4'>
         {selected === "containers" && <Containers />}
         {selected === "images" && <Images />}
+        {selected === "info" && <Info />}
       </div>
       <footer className='border-t p-4 text-center w-full flex items-center justify-center text-sm space-x-2'>
         <span>Powered by</span>
