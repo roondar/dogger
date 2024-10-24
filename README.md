@@ -6,10 +6,12 @@
   
 </div>
 
-Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Container` and `Images` through a Web UI.
+Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Containers` and `Images` through a Web UI.
 ## Features
 
-1. **Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. Only 4MB of memory is occupied during runtime, and CPU usage is almost 0.
+1. **Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. It runs with just 4MB of memory usage and almost zero CPU usage.
+
+2. **Simple**: Currently able to display containers and images, and supports showing Docker version information.
 
 ![screenshot](/screenshot/1.png)
 

@@ -6,7 +6,7 @@
   
 </div>
 
-Crane 是一个使用`Rust`和`React`编写的简单、快速Docker Web UI，旨在通过一个Web UI查看，管理你的`Container` 和 `Images`。
+Crane 是一个使用`Rust`和`React`编写的简单、快速Docker Web UI，旨在通过一个Web UI查看，管理你的`Containers` 和 `Images`。
 
 ## 功能特点
 
