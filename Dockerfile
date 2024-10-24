@@ -1,10 +1,10 @@
-FROM rust:1.81 as rust_builder
+FROM rust:1.81 AS rust_builder
 WORKDIR /usr/src/dogger
 COPY ./service/ .
 RUN cargo install --path .
 
 
-FROM node:20 as node_builder
+FROM node:20 AS node_builder
 WORKDIR /usr/src/dogger
 COPY ../app/ .
 RUN npm install
