@@ -13,7 +13,6 @@ use tower_http::services::ServeDir;
 
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
     let app = Router::new()
         .route("/api/containers", get(get_containers))
         .route("/api/images", get(get_images))
@@ -22,7 +21,6 @@ async fn main() {
         .nest_service("/", ServeDir::new("../app/dist/"))
         .layer(CorsLayer::new().allow_origin(Any));
 
-    // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8595").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
