@@ -1,0 +1,68 @@
+name: Rust and Docker Workflow
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  ci-dev-build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Run cargo build
+        run: |
+          cd service
+          cargo build --release
+
+      - name: set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package.json
+      - name: Install dependencies
+        run: |
+          cd app
+          npm install
+      - name: build frontend
+        run: |
+          cd app
+          npm run build
+
+
+  ci-main-build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: wangyucode
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Extract version from package.json
+        id: extract_version
+        run: |
+          version=$(jq -r '.version' app/package.json)
+          echo "Version: $version"
+          echo "::set-output name=version::$version"
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: wangyucode/dogger:latest,wangyucode/dogger:${{ steps.extract_version.outputs.version }}

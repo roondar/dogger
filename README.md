@@ -9,29 +9,37 @@
 Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Container` and `Images` through a Web UI.
 ## Features
 
-1. **Fast**: Uses Rust as the backend and React as the frontend, Docker image is only.
-
+1. **Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. Only 4MB of memory is occupied during runtime, and CPU usage is almost 0.
 
 ![screenshot](/screenshot/1.png)
 
-## Installation Instructions
+## Installation
 
 1. Using Docker
 
 ```bash
-docker run -p 8595:8595 wangyucode/dogger:0.1.0
+docker run -d \
+  -p 8594:8594 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  wangyucode/dogger:0.1.0
 ```
 
 2. Using docker-compose
 
 ```yaml
 services:
-  crane:
+  dogger:
     image: wangyucode/dogger:0.1.0
     ports:
       - 8594:8594
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 ```
 
 ## Roadmap
 
-- [ ] Display running containers
+- [ ] Provide an external API to update containers, enabling automated updating/deployment of new image versions.
+
+- [ ] Display more container information, including container logs.
+
+- [ ] Add more Docker image and container management features.
