@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
 import packageJson from '../package.json';
 
 export default function Info() {
@@ -8,7 +8,8 @@ export default function Info() {
     const [info, setInfo] = useState([]);
 
     useEffect(() => {
-        fetch("./api/version")
+        const key = sessionStorage.getItem("dogger-key");
+        fetch("./api/version", { headers: { Authorization: `Bearer ${key}` } })
             .then((res) => res.json())
             .then((json) => {
                 console.log('version->', json);
@@ -32,20 +33,20 @@ export default function Info() {
     }, []);
 
     return (
-                <Table aria-label="Version info table">
-                    <TableHeader>
-                        <TableColumn>Name</TableColumn>
-                        <TableColumn>Value</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {info.map((item) => (
-                            <TableRow key={item.key}>
-                                <TableCell>{item.key}</TableCell>
-                                <TableCell>{item.value}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+        <Table aria-label="Version info table">
+            <TableHeader>
+                <TableColumn>Name</TableColumn>
+                <TableColumn>Value</TableColumn>
+            </TableHeader>
+            <TableBody>
+                {info.map((item) => (
+                    <TableRow key={item.key}>
+                        <TableCell>{item.key}</TableCell>
+                        <TableCell>{item.value}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
     )
 
 }

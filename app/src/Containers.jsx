@@ -1,27 +1,29 @@
 import { useEffect, useState } from "react";
 
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import { Progress } from "@nextui-org/progress";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Progress } from "@nextui-org/react";
+
 import { formatSize } from "./utils";
 
-export default function Containers() {
-
+export default function Containers({ initialized }) {
     const [containers, setContainers] = useState([]);
     const [stats, setStats] = useState({});
 
     useEffect(() => {
-        fetch("./api/containers")
-            .then((res) => res.json())
-            .then((json) => {
-                console.log("containers->", json);
-                if (json.data) setContainers(json.data);
-            });
-
-    }, []);
+        if (initialized) {
+            const key = sessionStorage.getItem("dogger-key");
+            fetch("./api/containers", { headers: { Authorization: `Bearer ${key}` } })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.log("containers->", json);
+                    if (json.data) setContainers(json.data);
+                });
+        }
+    }, [initialized]);
 
     useEffect(() => {
+        const key = sessionStorage.getItem("dogger-key");
         containers.filter((c) => c.State === "running").forEach((c) => {
-            fetch(`./api/containers/${c.Id}/stats`)
+            fetch(`./api/containers/${c.Id}/stats`, { headers: { Authorization: `Bearer ${key}` } })
                 .then((res) => res.json())
                 .then((json) => {
                     console.log("container stats->", json);
@@ -55,7 +57,7 @@ export default function Containers() {
                             <p className="text-xs">{container.Id.slice(0, 12)}</p>
                         </TableCell>
                         <TableCell className="text-sm">{container.Image}</TableCell>
-                        <TableCell  className="w-64">{container.Status}</TableCell>
+                        <TableCell className="w-64">{container.Status}</TableCell>
                         <TableCell className="w-48">
                             {container.Ports.filter((p) => !!p.PublicPort && (!p.IP || p.IP === "0.0.0.0")).map((port) =>
                                 <p key={`${port.Type}:${port.PublicPort} -> ${port.PrivatePort}`}>{`${port.Type}: ${port.PublicPort} -> ${port.PrivatePort}`}</p>
@@ -63,12 +65,12 @@ export default function Containers() {
                         </TableCell>
                         <TableCell className="w-48">
                             {stats[container.Id] ?
-                                <Progress value={stats[container.Id].cpu_usage} label={`${stats[container.Id].cpu_usage.toFixed(2)}%`} classNames={{label: "text-xs"}}/>
+                                <Progress value={stats[container.Id].cpu_usage} label={`${stats[container.Id].cpu_usage.toFixed(2)}%`} classNames={{ label: "text-xs" }} />
                                 : <p>NA</p>}
                         </TableCell>
                         <TableCell className="w-48">
                             {stats[container.Id] ?
-                                <Progress showValueLabel={true} label={`${formatSize(stats[container.Id].used_memory)}/${formatSize(stats[container.Id].memory_limit)}`} value={stats[container.Id].used_memory / stats[container.Id].memory_limit * 100}  classNames={{label: "text-xs", value: "text-xs"}}/>
+                                <Progress showValueLabel={true} label={`${formatSize(stats[container.Id].used_memory)}/${formatSize(stats[container.Id].memory_limit)}`} value={stats[container.Id].used_memory / stats[container.Id].memory_limit * 100} classNames={{ label: "text-xs", value: "text-xs" }} />
                                 : <p>NA</p>}
                         </TableCell>
                     </TableRow>

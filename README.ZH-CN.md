@@ -10,9 +10,11 @@ Crane 是一个使用`Rust`和`React`编写的简单、快速Docker Web UI，旨
 
 ## 功能特点
 
-1. **快速**: 使用Rust作为后端，React作为前端，Docker镜像仅30MB，运行时仅占用4MB内存，CPU占用几乎为0。
+1. **轻量且快速**: 使用Rust作为后端，React作为前端，Docker镜像仅30MB，运行时仅占用4MB内存，CPU占用几乎为0。
 
-2. **简洁**: 目前能够显示容器和镜像，并支持显示Docker版本信息。
+2. **简洁**: 目前能够显示容器及其cpu/内存占用，镜像，Docker版本信息。
+
+3. **安全**: 使用`DOGGER_KEY`作为环境变量来保护服务防止未经授权的访问。这是可选的。如果没有设置，你会在web页面看到一个警告。
 
 ![screenshot](/screenshot/1.png)
 
@@ -24,7 +26,8 @@ Crane 是一个使用`Rust`和`React`编写的简单、快速Docker Web UI，旨
 docker run -d \
   -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  wangyucode/dogger:0.1.3
+  -e DOGGER_KEY=your-super-strong-dogger-key \
+  wangyucode/dogger:0.2.0
 ```
 
 2. 使用 docker-compose
@@ -32,11 +35,13 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.1.3
+    image: wangyucode/dogger:0.2.0
     ports:
       - 8595:8595
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOGGER_KEY: your-super-strong-dogger-key
 ```
 
 ## 路线图

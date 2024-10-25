@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
 
 import { formatSize } from "./utils"
 
@@ -9,7 +9,8 @@ export default function Images() {
     const [images, setImages] = useState([]);
 
     useEffect(() => {
-        fetch("./api/images")
+        const key = sessionStorage.getItem("dogger-key");
+        fetch("./api/images", {headers: {Authorization: `Bearer ${key}`}})
             .then((res) => res.json())
             .then((json) => {
                 console.log("images->", json);

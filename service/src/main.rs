@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::default::Default;
+use std::env;
 
 use axum::extract::Path;
 use axum::{response::Json, routing::get, Router};
@@ -8,21 +9,41 @@ use bollard::image::ListImagesOptions;
 use bollard::{container::ListContainersOptions, Docker};
 use futures_util::StreamExt;
 use serde_json::{json, Value};
-use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
+use tower_http::validate_request::ValidateRequestHeaderLayer;
+
+const DOGGER_KEY: &str = "DOGGER_KEY";
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
+    let key_result = env::var(DOGGER_KEY);
+    let mut app = Router::new()
         .route("/api/containers", get(get_containers))
         .route("/api/images", get(get_images))
         .route("/api/version", get(get_version))
+        .route("/api/ping", get(get_ping))
         .route("/api/containers/:id/stats", get(get_stats))
-        .nest_service("/", ServeDir::new("../app/dist/"))
-        .layer(CorsLayer::new().allow_origin(Any));
+        .nest_service("/", ServeDir::new("../app/dist/"));
+
+    if let Ok(key) = key_result {
+        app = app.layer(ValidateRequestHeaderLayer::bearer(key.as_str()));
+    }
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8595").await.unwrap();
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn get_ping() -> Json<Value> {
+    let docker = Docker::connect_with_local_defaults();
+    if docker.is_err() {
+        return Json(json!({ "error": "Failed to connect to Docker" }));
+    }
+    let pong = docker.unwrap().ping().await;
+    let has_key = env::var(DOGGER_KEY).is_ok();
+    match pong {
+        Ok(pong) => Json(json!({ "data": pong, "hasKey":  has_key})),
+        Err(err) => Json(json!({ "error": err.to_string(), "hasKey":  has_key })),
+    }
 }
 
 async fn get_containers() -> Json<Value> {
