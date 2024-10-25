@@ -1,9 +1,5 @@
-import { useState } from 'react'
-import { Button } from '@nextui-org/button'
-import { Link } from '@nextui-org/link'
-import { Image } from '@nextui-org/image'
-import { Divider } from "@nextui-org/divider";
-import { Tabs, Tab } from "@nextui-org/tabs";
+import { useState, useEffect } from 'react'
+import { Link, Image, Divider, Tabs, Tab, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input } from '@nextui-org/react'
 
 import './App.css'
 import reactLogo from './assets/react.svg'
@@ -16,6 +12,52 @@ import Info from './Info';
 
 function App() {
   const [selected, setSelected] = useState("containers");
+  const [errorModal, setErrorModal] = useState("");
+  const [noKeyWarning, setNoKeyWarning] = useState(false);
+  const [loginModal, setLoginModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [key, setKey] = useState("");
+  const [isKeyInvalid, setIsKeyInvalid] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  async function initData() {
+    setLoading(true);
+    let apiKey = key
+    if (!apiKey) apiKey = sessionStorage.getItem("dogger-key");
+    let res = await fetch("./api/ping", { headers: { "Authorization": `Bearer ${apiKey}` } });
+
+    setLoading(false);
+    if (res.status === 401) {
+      setLoginModal(true);
+      setIsKeyInvalid(true);
+      return;
+    }
+    setLoginModal(false);
+    let json = await res.json();
+    if (json.error) {
+      setErrorModal("❌ Cannot connect to the Docker Engine");
+      return;
+    }
+    if (!json.hasKey) {
+      setNoKeyWarning(true);
+    }
+
+    sessionStorage.setItem("dogger-key", apiKey);
+    setInitialized(true);
+  }
+
+  useEffect(() => {
+    initData();
+  }, []);
+
+  const onClose = () => {
+    initData();
+  }
+
+  const onKeyChange = key => {
+    setIsKeyInvalid(false);
+    setKey(key);
+  }
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -47,11 +89,13 @@ function App() {
           }></Tab>
         </Tabs>
       </nav>
-      <div className='container flex flex-1 mx-auto p-4'>
-        {selected === "containers" && <Containers />}
+      {<div className='container flex flex-col flex-1 mx-auto p-4'>
+        {noKeyWarning && <p className="p-4 bg-yellow-100 text-yellow-700 rounded-md shadow-small mb-4 text-sm">⚠️ The <strong className="text-yellow-900">DOGGER_KEY</strong> has not been set. Please set <strong className="text-yellow-900">DOGGER_KEY</strong> as an environment variable when running Dogger for security.</p>}
+        {(selected === "containers") && <Containers initialized={initialized} />}
         {selected === "images" && <Images />}
         {selected === "info" && <Info />}
-      </div>
+      </div>}
+
       <footer className='border-t p-4 text-center w-full flex items-center justify-center text-sm space-x-2'>
         <span>Powered by</span>
         <Link href="https://www.rust-lang.org/" size="sm"><Image width={16} src={rustLogo}></Image>Rust</Link>
@@ -63,6 +107,32 @@ function App() {
         <span>Made with ❤️ by</span>
         <Link href="https://wycode.cn" size="sm">wycode.cn</Link>
       </footer>
+
+      <Modal isOpen={!!errorModal} hideCloseButton >
+        <ModalContent>
+          <ModalHeader>{errorModal}</ModalHeader>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={!!loginModal} hideCloseButton >
+        <ModalContent>
+          <ModalHeader>Input Key</ModalHeader>
+          <ModalBody>
+            <Input type="text"
+              label="Dogger Key"
+              isRequired
+              isInvalid={isKeyInvalid}
+              variant="bordered"
+              errorMessage="⛔ Dogger Key is invalid"
+              value={key}
+              onValueChange={onKeyChange} />
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onPress={onClose} isLoading={loading}>
+              OK
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

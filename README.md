@@ -9,9 +9,11 @@
 Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Containers` and `Images` through a Web UI.
 ## Features
 
-1. **Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. It runs with just 4MB of memory usage and almost zero CPU usage.
+1. **Lightweight & Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. It runs with just 4MB of memory usage and almost zero CPU usage.
 
-2. **Simple**: Currently able to display containers and images, and supports showing Docker version information.
+2. **Simple**: Currently able to display containers with cpu/memory usage, and images, and supports showing Docker version information.
+
+3. **Security**: use `DOGGER_KEY` as an environment variable to protect the service from unauthorized access. this is optional. if you don't set it, you will see a warning on the web page.
 
 ![screenshot](/screenshot/1.png)
 
@@ -23,7 +25,8 @@ Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed
 docker run -d \
   -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  wangyucode/dogger:0.1.3
+  -e DOGGER_KEY=your-super-strong-dogger-key \
+  wangyucode/dogger:0.2.0
 ```
 
 2. Using docker-compose
@@ -31,11 +34,13 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.1.3
+    image: wangyucode/dogger:0.2.0
     ports:
       - 8595:8595
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOGGER_KEY: your-super-strong-dogger-key
 ```
 
 ## Roadmap
