@@ -27,7 +27,7 @@ export default function Containers() {
                     console.log("container stats->", json);
                     if (json.data) setStats(prevStats => ({
                         ...prevStats,
-                        [json.data.id]: {
+                        [c.Id]: {
                             cpu_usage: getCpuUsage(json.data),
                             used_memory: json.data.memory_stats?.usage - json.data.memory_stats?.stats?.cache || 0,
                             memory_limit: json.data.memory_stats.limit,
@@ -57,10 +57,9 @@ export default function Containers() {
                         <TableCell className="text-sm">{container.Image}</TableCell>
                         <TableCell  className="w-64">{container.Status}</TableCell>
                         <TableCell className="w-48">
-                            {container.Ports.filter((p) => !!p.PublicPort).map((port) =>
-                                <p key={`${port.PublicPort} -> ${port.PrivatePort}`}>{`${port.Type}: ${port.PublicPort} -> ${port.PrivatePort}`}</p>
+                            {container.Ports.filter((p) => !!p.PublicPort && (!p.IP || p.IP === "0.0.0.0")).map((port) =>
+                                <p key={`${port.Type}:${port.PublicPort} -> ${port.PrivatePort}`}>{`${port.Type}: ${port.PublicPort} -> ${port.PrivatePort}`}</p>
                             )}
-
                         </TableCell>
                         <TableCell className="w-48">
                             {stats[container.Id] ?
