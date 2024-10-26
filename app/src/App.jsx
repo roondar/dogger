@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, Image, Divider, Tabs, Tab, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input } from '@nextui-org/react'
+import { blake3 } from "hash-wasm";
 
 import './App.css'
 import reactLogo from './assets/react.svg'
@@ -22,14 +23,19 @@ function App() {
 
   async function initData() {
     setLoading(true);
-    let apiKey = key
-    if (!apiKey) apiKey = sessionStorage.getItem("dogger-key");
+    let apiKey = sessionStorage.getItem("dogger-key");
+    if (!apiKey) {
+      apiKey = key || "dogger"
+      apiKey = await blake3(apiKey);
+    };
+    
     let res = await fetch("./api/ping", { headers: { "Authorization": `Bearer ${apiKey}` } });
 
     setLoading(false);
     if (res.status === 401) {
       setLoginModal(true);
       setIsKeyInvalid(true);
+      sessionStorage.removeItem("dogger-key");
       return;
     }
     setLoginModal(false);

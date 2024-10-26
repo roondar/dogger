@@ -16,20 +16,20 @@ const DOGGER_KEY: &str = "DOGGER_KEY";
 
 #[tokio::main]
 async fn main() {
-    let key_result = env::var(DOGGER_KEY);
-    let mut app = Router::new()
+    let key = env::var(DOGGER_KEY).unwrap_or("dogger".to_string());
+    // hash the key
+    let hash = blake3::hash(key.as_bytes());
+    let app = Router::new()
         .route("/api/containers", get(get_containers))
         .route("/api/images", get(get_images))
         .route("/api/version", get(get_version))
         .route("/api/ping", get(get_ping))
         .route("/api/containers/:id/stats", get(get_stats))
+        .layer(ValidateRequestHeaderLayer::bearer(hash.to_string().as_str()))
         .nest_service("/", ServeDir::new("../app/dist/"));
 
-    if let Ok(key) = key_result {
-        app = app.layer(ValidateRequestHeaderLayer::bearer(key.as_str()));
-    }
-
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8595").await.unwrap();
+    println!("Dogger API running on: http://0.0.0.0:8595");
     axum::serve(listener, app).await.unwrap();
 }
 
