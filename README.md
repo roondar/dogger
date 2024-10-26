@@ -26,7 +26,7 @@ docker run -d \
   -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e DOGGER_KEY=your-super-strong-dogger-key \
-  wangyucode/dogger:0.2.0
+  wangyucode/dogger:0.2.1
 ```
 
 2. Using docker-compose
@@ -34,7 +34,7 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.2.0
+    image: wangyucode/dogger:0.2.1
     ports:
       - 8595:8595
     volumes:
