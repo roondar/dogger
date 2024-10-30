@@ -6,7 +6,8 @@
   
 </div>
 
-Crane is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Containers` and `Images` through a Web UI.
+Dogger is a simple and fast Docker Web UI written in `Rust` and `React`, designed to view and manage your `Containers` and `Images` through a Web UI.
+
 ## Features
 
 1. **Lightweight & Fast**: Uses Rust as the backend and React as the frontend, Docker image is only 30MB. It runs with just 4MB of memory usage and almost zero CPU usage.
@@ -26,7 +27,7 @@ docker run -d \
   -p 8595:8595 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e DOGGER_KEY=your-super-strong-dogger-key \
-  wangyucode/dogger:0.2.1
+  wangyucode/dogger:0.2.2
 ```
 
 2. Using docker-compose
@@ -34,7 +35,7 @@ docker run -d \
 ```yaml
 services:
   dogger:
-    image: wangyucode/dogger:0.2.1
+    image: wangyucode/dogger:0.2.2
     ports:
       - 8595:8595
     volumes:
