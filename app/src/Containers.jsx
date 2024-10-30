@@ -22,20 +22,27 @@ export default function Containers({ initialized }) {
 
     useEffect(() => {
         const key = sessionStorage.getItem("dogger-key");
-        containers.filter((c) => c.State === "running").forEach((c) => {
-            fetch(`./api/containers/${c.Id}/stats`, { headers: { Authorization: `Bearer ${key}` } })
+        const statPromises = containers.filter((c) => c.State === "running").map(c => {
+            return fetch(`./api/containers/${c.Id}/stats`, { headers: { Authorization: `Bearer ${key}` } })
                 .then((res) => res.json())
-                .then((json) => {
-                    console.log("container stats->", json);
-                    if (json.data) setStats(prevStats => ({
-                        ...prevStats,
-                        [c.Id]: {
-                            cpu_usage: getCpuUsage(json.data),
-                            used_memory: json.data.memory_stats?.usage - json.data.memory_stats?.stats?.cache || 0,
-                            memory_limit: json.data.memory_stats.limit,
-                        }
-                    }));
+                .then(json => {
+                    json.id = c.Id;
+                    return json
                 });
+        });
+        Promise.all(statPromises).then(stats => {
+            console.log("stats->", stats);
+            const newStats = {};
+            stats.forEach(stat => {
+                if (stat.data) {
+                    newStats[stat.id] = {
+                        cpu_usage: getCpuUsage(stat.data),
+                        used_memory: stat.data.memory_stats?.usage - (stat.data.memory_stats?.stats?.cache || 0),
+                        memory_limit: stat.data.memory_stats.limit,
+                    }
+                }
+            });
+            setStats(newStats);
         });
     }, [containers])
 
