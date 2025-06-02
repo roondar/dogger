@@ -3,6 +3,7 @@ import { Link, Image, Divider, Tabs, Tab, Modal, ModalContent, ModalHeader, Moda
 import { blake3 } from "hash-wasm";
 
 import './App.css'
+import './custom-tabs.css'
 import reactLogo from './assets/react.svg'
 import rustLogo from './assets/rust.svg'
 import githubLogo from './assets/github.svg'
@@ -68,22 +69,22 @@ function App() {
   return (
     <div className="flex flex-col items-center min-h-screen">
       <nav className='w-full py-3 md:py-2 flex flex-row justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 shadow-lg'>
-        <Tabs color='secondary' size="md" selectedKey={selected} onSelectionChange={setSelected} classNames={{
+        <Tabs color='secondary' size="md" selectedKey={selected} onSelectionChange={setSelected} className="custom-tabs" classNames={{
           tabList: "gap-2 md:gap-4 w-full relative rounded-none p-0 border-b border-divider",
-          tab: "max-w-fit px-3 md:px-4 h-10 md:h-12",
-          tabContent: "text-gray-800 group-data-[selected=true]:text-black font-medium"
+          tab: "max-w-fit px-3 md:px-4 h-10 md:h-12 tab-container relative",
+          tabContent: "custom-tab-content group-data-[selected=true]:selected"
         }}>
           <Tab key="containers" title={
             <div className="flex items-center space-x-1 md:space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6 tab-icon">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
               </svg>
               <span className="text-sm md:text-base">Containers</span>
             </div>
           }></Tab>
           <Tab key="images" title={
             <div className="flex items-center space-x-1 md:space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6 tab-icon">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
               </svg>
               <span className="text-sm md:text-base">Images</span>
@@ -91,7 +92,7 @@ function App() {
           }></Tab>
           <Tab key="info" title={
             <div className="flex items-center space-x-1 md:space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 md:size-6 tab-icon">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
               </svg>
               <span className="text-sm md:text-base">Info</span>

@@ -1,0 +1,67 @@
+/* Custom tab styling for better visibility and clarity */
+
+/* Enhance tab content colors for better contrast */
+.custom-tabs .custom-tab-content {
+  color: #4a5568; /* darker gray for unselected tabs */
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Selected tab styling */
+.custom-tabs .custom-tab-content.selected {
+  color: #1a202c; /* very dark gray/black for selected tab */
+  font-weight: 700;
+}
+
+/* Hover effects for better interactivity */
+.custom-tabs .custom-tab-content:hover {
+  color: #2d3748; /* darker on hover */
+}
+
+/* Add background highlight for selected tab */
+.custom-tabs [data-selected="true"] {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  border-radius: 6px;
+}
+
+/* Enhanced border for selected tab */
+.custom-tabs [data-selected="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 2px 2px 0 0;
+}
+
+/* Icon styling for better visibility */
+.custom-tabs .tab-icon {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.custom-tabs [data-selected="true"] .tab-icon {
+  opacity: 1;
+}
+
+/* Tab hover effects */
+.custom-tabs .tab-container:hover .tab-icon {
+  opacity: 0.9;
+}
+
+/* Alternative high-contrast theme */
+.custom-tabs.high-contrast .custom-tab-content {
+  color: #2d3748; /* darker default */
+}
+
+.custom-tabs.high-contrast .custom-tab-content.selected {
+  color: #000000; /* pure black for selected */
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.custom-tabs.high-contrast [data-selected="true"] {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
