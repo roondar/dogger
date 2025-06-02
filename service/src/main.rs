@@ -3,8 +3,8 @@ use std::default::Default;
 use std::env;
 
 use axum::extract::Path;
-use axum::{response::Json, routing::get, Router};
-use bollard::container::StatsOptions;
+use axum::{response::Json, routing::{get, post}, Router};
+use bollard::container::{StatsOptions, StartContainerOptions, StopContainerOptions, RestartContainerOptions};
 use bollard::image::ListImagesOptions;
 use bollard::{container::ListContainersOptions, Docker};
 use futures_util::StreamExt;
@@ -25,6 +25,9 @@ async fn main() {
         .route("/api/version", get(get_version))
         .route("/api/ping", get(get_ping))
         .route("/api/containers/:id/stats", get(get_stats))
+        .route("/api/containers/:id/start", post(start_container))
+        .route("/api/containers/:id/stop", post(stop_container))
+        .route("/api/containers/:id/restart", post(restart_container))
         .layer(ValidateRequestHeaderLayer::bearer(hash.to_string().as_str()))
         .nest_service("/", ServeDir::new("../app/dist/"));
 
@@ -110,6 +113,57 @@ async fn get_stats(Path(id): Path<String>) -> Json<Value> {
         .unwrap();
     match stats {
         Ok(stats) => Json(json!({ "data": stats })),
+        Err(err) => Json(json!({ "error": err.to_string() })),
+    }
+}
+
+async fn start_container(Path(id): Path<String>) -> Json<Value> {
+    let docker = Docker::connect_with_local_defaults();
+    if docker.is_err() {
+        return Json(json!({ "error": "Failed to connect to Docker" }));
+    }
+    
+    let options = Some(StartContainerOptions::<String> {
+        ..Default::default()
+    });
+    
+    let result = docker.unwrap().start_container(&id, options).await;
+    match result {
+        Ok(_) => Json(json!({ "success": true, "message": "Container started successfully" })),
+        Err(err) => Json(json!({ "error": err.to_string() })),
+    }
+}
+
+async fn stop_container(Path(id): Path<String>) -> Json<Value> {
+    let docker = Docker::connect_with_local_defaults();
+    if docker.is_err() {
+        return Json(json!({ "error": "Failed to connect to Docker" }));
+    }
+    
+    let options = Some(StopContainerOptions {
+        t: 10, // 10 seconds timeout
+    });
+    
+    let result = docker.unwrap().stop_container(&id, options).await;
+    match result {
+        Ok(_) => Json(json!({ "success": true, "message": "Container stopped successfully" })),
+        Err(err) => Json(json!({ "error": err.to_string() })),
+    }
+}
+
+async fn restart_container(Path(id): Path<String>) -> Json<Value> {
+    let docker = Docker::connect_with_local_defaults();
+    if docker.is_err() {
+        return Json(json!({ "error": "Failed to connect to Docker" }));
+    }
+    
+    let options = Some(RestartContainerOptions {
+        t: 10, // 10 seconds timeout
+    });
+    
+    let result = docker.unwrap().restart_container(&id, options).await;
+    match result {
+        Ok(_) => Json(json!({ "success": true, "message": "Container restarted successfully" })),
         Err(err) => Json(json!({ "error": err.to_string() })),
     }
 }

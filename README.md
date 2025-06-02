@@ -14,7 +14,9 @@ Dogger is a simple and fast Docker Web UI written in `Rust` and `React`, designe
 
 2. **Simple**: Currently able to display containers with cpu/memory usage, and images, and supports showing Docker version information.
 
-3. **Security**: use `DOGGER_KEY` as an environment variable to protect the service from unauthorized access. this is optional. if you don't set it, you will see a warning on the web page.
+3. **Container Management**: Provides start, stop, and restart actions for containers directly from the web interface.
+
+4. **Security**: use `DOGGER_KEY` as an environment variable to protect the service from unauthorized access. this is optional. if you don't set it, you will see a warning on the web page.
 
 ![screenshot](/screenshot/1.png)
 
@@ -45,6 +47,8 @@ services:
 ```
 
 ## Roadmap
+
+- [x] Add container management actions (start, stop, restart).
 
 - [ ] Provide an external API to update containers, enabling automated updating/deployment of new image versions.
 

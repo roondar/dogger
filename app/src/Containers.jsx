@@ -1,12 +1,42 @@
 import { useEffect, useState } from "react";
 
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Progress } from "@nextui-org/react";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Progress, Button, ButtonGroup } from "@nextui-org/react";
 
 import { formatSize } from "./utils";
 
 export default function Containers({ initialized }) {
     const [containers, setContainers] = useState([]);
     const [stats, setStats] = useState({});
+    const [actionLoading, setActionLoading] = useState({});
+
+    const performContainerAction = async (containerId, action) => {
+        setActionLoading(prev => ({ ...prev, [containerId]: action }));
+        const key = sessionStorage.getItem("dogger-key");
+        
+        try {
+            const response = await fetch(`./api/containers/${containerId}/${action}`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${key}` }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Refresh the containers list
+                const containersResponse = await fetch("./api/containers", { 
+                    headers: { Authorization: `Bearer ${key}` } 
+                });
+                const containersJson = await containersResponse.json();
+                if (containersJson.data) setContainers(containersJson.data);
+            } else {
+                console.error(`Failed to ${action} container:`, result.error);
+            }
+        } catch (error) {
+            console.error(`Error performing ${action}:`, error);
+        } finally {
+            setActionLoading(prev => ({ ...prev, [containerId]: null }));
+        }
+    };
 
     useEffect(() => {
         if (initialized) {
@@ -55,6 +85,7 @@ export default function Containers({ initialized }) {
                 <TableColumn>Ports</TableColumn>
                 <TableColumn>CPU</TableColumn>
                 <TableColumn>Memory</TableColumn>
+                <TableColumn>Actions</TableColumn>
             </TableHeader>
             <TableBody>
                 {containers.map((container) => (
@@ -79,6 +110,25 @@ export default function Containers({ initialized }) {
                             {stats[container.Id] ?
                                 <Progress showValueLabel={true} label={`${formatSize(stats[container.Id].used_memory)}/${formatSize(stats[container.Id].memory_limit)}`} value={stats[container.Id].used_memory / stats[container.Id].memory_limit * 100} classNames={{ label: "text-xs", value: "text-xs" }} />
                                 : <p>NA</p>}
+                        </TableCell>
+                        <TableCell className="w-48">
+                            <ButtonGroup size="sm" variant="flat">
+                                <Button 
+                                    color={container.State === "running" ? "danger" : "success"}
+                                    isLoading={actionLoading[container.Id] === (container.State === "running" ? "stop" : "start")}
+                                    onClick={() => performContainerAction(container.Id, container.State === "running" ? "stop" : "start")}
+                                >
+                                    {container.State === "running" ? "Stop" : "Start"}
+                                </Button>
+                                <Button 
+                                    color="warning"
+                                    isLoading={actionLoading[container.Id] === "restart"}
+                                    onClick={() => performContainerAction(container.Id, "restart")}
+                                    isDisabled={container.State !== "running"}
+                                >
+                                    Restart
+                                </Button>
+                            </ButtonGroup>
                         </TableCell>
                     </TableRow>
                 ))}

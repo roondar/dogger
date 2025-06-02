@@ -1,4 +1,4 @@
-FROM rust:1.81 AS rust_builder
+FROM rust:1.82 AS rust_builder
 WORKDIR /usr/src/dogger
 COPY ./service/ .
 RUN cargo install --path .
